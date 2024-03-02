@@ -1,0 +1,14 @@
+[user]
+	email = 1306402+AtomsForPeace@users.noreply.github.com
+	username = atomsforpeace
+	name = atomsforpeace
+
+[alias]
+    glog = log --all --pretty='format:%d %Cgreen%h%Creset %an - %s' --graph
+
+[merge]
+    tool = meld
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
