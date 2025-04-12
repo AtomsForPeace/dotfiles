@@ -59,13 +59,36 @@ return {
 				end, opts)
 			end)
 
-			-- don't add this function in the `on_attach` callback.
-			-- `format_on_save` should run only once, before the language servers are active.
-			lsp_zero.format_on_save({
-				format_opts = {
-					async = false,
-					timeout_ms = 10000,
-				},
+			-- Taken from docs: https://lsp-zero.netlify.app/docs/language-server-configuration.html
+			local buffer_autoformat = function(bufnr)
+				local group = "lsp_autoformat"
+				vim.api.nvim_create_augroup(group, { clear = false })
+				vim.api.nvim_clear_autocmds({ group = group, buffer = bufnr })
+
+				vim.api.nvim_create_autocmd("BufWritePre", {
+					buffer = bufnr,
+					group = group,
+					desc = "LSP format on save",
+					callback = function()
+						-- note: do not enable async formatting
+						vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
+					end,
+				})
+			end
+
+			vim.api.nvim_create_autocmd("LspAttach", {
+				callback = function(event)
+					local id = vim.tbl_get(event, "data", "client_id")
+					local client = id and vim.lsp.get_client_by_id(id)
+					if client == nil then
+						return
+					end
+
+					-- make sure there is at least one client with formatting capabilities
+					if client.supports_method("textDocument/formatting") then
+						buffer_autoformat(event.buf)
+					end
+				end,
 			})
 
 			require("mason").setup({})
