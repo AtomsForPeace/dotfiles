@@ -142,7 +142,7 @@ fi
 # Example aliases
 # alias bashconfig="mate ~/.bashrc"
 # alias ohmybash="mate ~/.oh-my-bash"
-alias vim="~/Downloads/nvim-linux64/bin/nvim"
+alias vim="/opt/nvim-linux-x86_64/bin/nvim"
 
 export NVM_DIR="/home/adam/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -153,5 +153,5 @@ export PATH="$PATH:~/Downloads/azuredatastudio-linux-x64"
 
 source "$HOME/.rye/env"
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 . "$HOME/.cargo/env"
+export PATH="$HOME/bin:$PATH"
