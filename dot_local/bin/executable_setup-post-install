@@ -1,15 +1,36 @@
 #!/bin/bash
+if [ "$(id -u)" -ne 0 ]; then
+  echo "This script requires sudo. Running with elevated privileges..."
+  exec sudo bash "$0" "$@"
+  exit $?
+fi
 
-sudo apt install git
-
-git clone https://github.com/ohmybash/oh-my-bash.git ~/.oh-my-bash
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-sudo rm -rf /opt/nvim
-sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
-curl https://sh.rustup.rs -sSf | sh
-curl -sSf https://rye.astral.sh/get | bash
-source "$HOME/.rye/env"
-source ~/.bashrc
+# Install basics
+apt install -y git curl wget build-essential \
+  tmux htop tree ripgrep fd-find \
+  unzip xclip net-tools openssh-server
 
 # Install NVIDIA drivers (if needed)
-sudo apt update && sudo apt install -y nvidia-driver-535
+apt update && apt install -y nvidia-driver-535
+
+# Install node
+curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+apt install -y nodejs
+
+# Install oh-my-bash
+git clone https://github.com/ohmybash/oh-my-bash.git ~/.oh-my-bash
+
+# Install nvim
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+rm -rf /opt/nvim
+tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+
+# Install rye
+curl -sSf https://rye.astral.sh/get | bash
+source "$HOME/.rye/env"
+
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+
+source ~/.bashrc
