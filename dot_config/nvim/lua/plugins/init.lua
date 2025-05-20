@@ -30,5 +30,16 @@ return {
                 { noremap = true, silent = true }
             )
         end
+    },
+    {
+        dir = vim.fn.stdpath('config') .. '/lua/adam/floating_terminal',
+        name = 'floating_terminal_plugin',
+        lazy = true,
+        keys = {
+            { '.', function() require('user.floating_terminal').toggle_terminal() end, desc = "Toggle Floating Terminal" },
+        },
+        config = function()
+            vim.api.nvim_set_keymap('t', '<esc>', '<c-\\><c-n>:lua require("user.floating_terminal").hide_terminal()<CR>', { noremap = true, silent = true })
+        end,
     }
 }

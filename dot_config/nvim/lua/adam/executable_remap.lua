@@ -56,3 +56,6 @@ end)
 vim.keymap.set("n", "<leader>sm", ":MaximizerToggle<CR>") -- toggle split window maximization
 
 vim.keymap.set("n", "gl", "<cmd>lua vim.diagnostic.open_float()<CR>")
+
+-- In terminal mode get into normal mode
+vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>")
