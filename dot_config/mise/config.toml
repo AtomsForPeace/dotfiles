@@ -1,0 +1,9 @@
+[tools]
+node = "22.19.0"
+usage = "latest"
+
+[settings]
+experimental = true
+
+[settings.github]
+use_git_credentials = true

@@ -32,14 +32,15 @@ return {
         end
     },
     {
-        dir = vim.fn.stdpath('config') .. '/lua/adam/floating_terminal',
-        name = 'floating_terminal_plugin',
-        lazy = true,
-        keys = {
-            { '.', function() require('user.floating_terminal').toggle_terminal() end, desc = "Toggle Floating Terminal" },
-        },
+        dir = '~/ProReNata/shapedown.nvim',
+        dev = true,
+        dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
         config = function()
-            vim.api.nvim_set_keymap('t', '<esc>', '<c-\\><c-n>:lua require("user.floating_terminal").hide_terminal()<CR>', { noremap = true, silent = true })
+          require('shapedown').setup()
+          vim.keymap.set('n', '<leader>so', '<cmd>Shapedown<cr>',         { desc = 'Shapedown: open picker' })
+          vim.keymap.set('n', '<leader>sn', '<cmd>Shapedown new<cr>',     { desc = 'Shapedown: new document' })
+          vim.keymap.set('n', '<leader>sp', '<cmd>Shapedown project<cr>', { desc = 'Shapedown: project picker' })
+          vim.keymap.set('n', '<leader>sr', '<cmd>Shapedown reload<cr>',  { desc = 'Shapedown: reload buffer' })
         end,
-    }
+      }
 }

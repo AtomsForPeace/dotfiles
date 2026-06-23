@@ -1,24 +1,78 @@
 #!/bin/bash
+# OS-specific provisioning, run after `chezmoi apply` has put the dotfiles in place.
+# Safe to re-run: every step is idempotent.
+set -euo pipefail
+
+OS="$(uname -s)"
+
+# Resolve where the Brewfile / mise config live (chezmoi source dir).
+SRC="${HOME}/.local/share/chezmoi"
+if command -v chezmoi >/dev/null 2>&1; then
+  SRC="$(chezmoi source-path 2>/dev/null || echo "$SRC")"
+fi
+
+# ---------------------------------------------------------------------------
+# macOS
+# ---------------------------------------------------------------------------
+if [ "$OS" = "Darwin" ]; then
+  # Homebrew
+  if ! command -v brew >/dev/null 2>&1; then
+    echo "==> Installing Homebrew"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+  if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [ -x /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+
+  # Everything from the Brewfile (cli tools, casks, taps).
+  if [ -f "$SRC/Brewfile" ]; then
+    echo "==> brew bundle"
+    brew bundle --file="$SRC/Brewfile"
+  fi
+
+  # oh-my-zsh (keep our chezmoi-managed .zshrc, don't let the installer overwrite it).
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "==> Installing oh-my-zsh"
+    RUNZSH=no KEEP_ZSHRC=yes \
+      sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  fi
+
+  # mise-managed language runtimes (node, python, uv, ...).
+  # Private prorenata CLIs in mise need a GitHub SSH key + org access first;
+  # they're allowed to fail here without aborting the rest of setup.
+  if command -v mise >/dev/null 2>&1; then
+    echo "==> mise install"
+    mise install || echo "   (some mise tools failed — likely private repos needing SSH access)"
+  fi
+
+  echo "==> macOS provisioning complete."
+  exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# Linux (apt-based GPU dev box)
+# ---------------------------------------------------------------------------
 if [ "$(id -u)" -ne 0 ]; then
-  echo "This script requires sudo. Running with elevated privileges..."
+  echo "This script requires sudo on Linux. Re-running with elevated privileges..."
   exec sudo bash "$0" "$@"
-  exit $?
 fi
 
 # Install basics
-apt install -y git curl wget build-essential \
+apt update && apt install -y git curl wget build-essential \
   tmux htop tree ripgrep fd-find \
   unzip xclip net-tools openssh-server
 
 # Install NVIDIA drivers (if needed)
-apt update && apt install -y nvidia-driver-535
+apt install -y nvidia-driver-535 || true
 
 # Install node
 curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
 apt install -y nodejs
 
 # Install oh-my-bash
-git clone https://github.com/ohmybash/oh-my-bash.git ~/.oh-my-bash
+[ -d ~/.oh-my-bash ] || git clone https://github.com/ohmybash/oh-my-bash.git ~/.oh-my-bash
 
 # Install nvim
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
@@ -31,6 +85,6 @@ curl -sSf https://rye.astral.sh/get | bash
 source "$HOME/.rye/env"
 
 curl -fsSL https://get.docker.com | sh
-sudo usermod -aG docker $USER
+usermod -aG docker "${SUDO_USER:-$USER}"
 
-source ~/.bashrc
+echo "==> Linux provisioning complete."

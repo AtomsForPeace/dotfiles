@@ -1,0 +1,27 @@
+[user]
+    name = Adam Bannister
+    email = 1306402+AtomsForPeace@users.noreply.github.com
+
+# We don't want lots of local accidental merges
+[pull]
+    rebase = true
+
+[blame]
+    ignoreRevsFile = .git-blame-ignore-revs
+
+[color]
+    ui = auto
+    branch = auto
+    diff = auto
+    status = auto
+
+[alias]
+    glog = log --all --pretty='format:%d %Cgreen%h%Creset %an - %s' --graph
+
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
