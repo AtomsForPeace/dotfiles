@@ -40,7 +40,7 @@ if [ "$OS" = "Darwin" ]; then
   fi
 
   # mise-managed language runtimes (node, python, uv, ...).
-  # Private prorenata CLIs in mise need a GitHub SSH key + org access first;
+  # Private work CLIs in mise need a GitHub SSH key + org access first;
   # they're allowed to fail here without aborting the rest of setup.
   if command -v mise >/dev/null 2>&1; then
     echo "==> mise install"

@@ -15,7 +15,7 @@ package and a cross-platform bootstrap script.
    ```
 
 2. Make sure you have a GitHub SSH key on the machine and that it's added to your
-   account — the private `prorenata` CLIs (installed via `mise`) need it. Generate
+   account — the private work CLIs (installed via `mise`) need it. Generate
    one with `ssh-keygen -t ed25519` and add it at <https://github.com/settings/keys>.
 
 3. Run the bootstrap:
