@@ -48,5 +48,4 @@ path instead.
 - Editor: `.config/nvim` (lazy.nvim, lock file pinned)
 - Terminal/mux: `.config/tmux`, `.config/alacritty.toml`
 - Tooling: `.config/mise/config.toml`, `.gitconfig`, `.config/git/ignore`
-- Keyboard: `.config/karabiner/karabiner.json`
 - Packages: `Brewfile` (not deployed to `$HOME`; used by the bootstrap)
