@@ -1,3 +1,4 @@
 .config/nvim/.netrwhist
 Brewfile
 README.md
+.config/nvim/lua/plugins/local.lua
